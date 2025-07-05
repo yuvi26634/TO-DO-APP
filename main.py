@@ -5,10 +5,8 @@ def menu():
     print(" 1. ADD TASK\n 2. MODIFY TASK\n 3. REMOVE TASK\n 4. VIEW TASK\n 5. EXIT")
 
 def addtask():
-    listt=[]
-    listt.append(input("Enter Task : ").upper())
-    listt.append("PENDING")
-    to_do.append(listt)
+    task = {"TITLE":input("ENTER TASK TITLE : ").upper(),"STATUS":"PENDING"}
+    to_do.append(task)
 def modifytask():
     viewtask()
     if not to_do:
@@ -34,10 +32,10 @@ def modifytask():
         except ValueError:
             print("INVALID CHOICE")
     if t==1:
-        to_do[n-1][1]="COMPLETED"
+        to_do[n-1]["STATUS"]="COMPLETED"
         print("TASK MARKED")
     elif t==2:
-        to_do[n-1][0]=input("ENTER TASK TIITLE : ").upper()
+        to_do[n-1]["TITLE"]=input("ENTER TASK TIITLE : ").upper()
         print("TITLE CHANGES")
 def removetask():
     if not to_do:
@@ -58,9 +56,9 @@ def viewtask():
         print("NO TASK TO VIEW")
         return
     print("-"*40)
-    print("SR NO".ljust(5)+" TASK".ljust(20)+"STATUS")
-    for i in range (len(to_do)):
-        print(f"{i+1}".ljust(5),to_do[i][0].ljust(20), to_do[i][1])
+    print("SR NO".ljust(6)+" TASK".ljust(20)+"STATUS")
+    for j,i in enumerate(to_do,start=1):
+        print(f"{j}".ljust(6)+i["TITLE"].ljust(20)+i["STATUS"])
     input("Press Enter to Continue...")
 while True:
     menu()

@@ -1,27 +1,34 @@
 import sqlite3
 def init_db():
-    with sqlite3.connect("database.db") as db:
-        cursor = db.cursor()
+    with sqlite3.connect("database.db") as conn:
+        cursor = conn.cursor()
         cursor.execute("create table if not exists tasks("
                        "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                        "name TEXT NOT NULL,"
-                       "status TEXT NOT NULL,"
-                       "due_date TEXT NOT NULL)")
+                       "status TEXT NOT NULL DEFAULT 'PENDING',"
+                       "due_date TEXT NOT NULL,"
+                       "created_date TEXT NOT NULL,"
+                       "updated_date TEXT DEFAULT '-',"
+                       "priority TEXT NOT NULL DEFAULT 'LOW')")
         conn.commit()
-def addtodb(name,status,due_date):
+def addtodb(name,status,due_date,created_date,priority):
     with sqlite3.connect("database.db") as conn:
         cursor = conn.cursor()
-        cursor.execute("insert into tasks(name,status,due_date) values (?,?,?)",(name,status,due_date))
+        cursor.execute("insert into tasks(name,status,due_date,created_date,priority) values (?,?,?,?,?)",(name,status,due_date,created_date,priority))
         conn.commit()
 
 def viewdb():
+    tasks = gettask()
+    if len(tasks) == 0:
+        print("NO TASKS FOUND")
+        return
     with sqlite3.connect("database.db") as conn:
         cursor = conn.cursor()
-        cursor.execute("select id,name,status,due_date from tasks")
-        print("S.NO".ljust(10)+"NAME".ljust(20)+"STATUS".ljust(15)+"DUE-DATE")
+        cursor.execute("select name,status,due_date,created_date,updated_date,priority from tasks")
+        print("S.NO".ljust(10)+"NAME".ljust(20)+"STATUS".ljust(15)+"DUE-DATE".ljust(15)+"CREATED-ON".ljust(15)+"UPDATED-ON".ljust(15)+"PRIORITY".ljust(10))
         for i,row in enumerate(cursor.fetchall(),start=1):
-            id,name,status,due_date=row
-            print(f"{i}".ljust(10)+name.ljust(20)+status.ljust(15)+due_date)
+            name,status,due_date,created_date,updated_date,priority=row
+            print(f"{i}".ljust(10)+name.ljust(20)+status.ljust(15)+due_date.ljust(15)+created_date.ljust(15)+updated_date.ljust(15)+priority.ljust(10))
 
 def gettask():
     with sqlite3.connect("database.db") as conn:
@@ -53,12 +60,21 @@ def modifystatus(id,status_new):
         cursor.execute("UPDATE tasks SET status = ? WHERE id = ?",(status_new,id))
         conn.commit()
 
-def modifydate(id,date_new):
+def modify_due_date(id,date_new):
     with sqlite3.connect("database.db") as conn:
         cursor = conn.cursor()
         cursor.execute("UPDATE tasks SET due_date = ? WHERE id = ?",(date_new,id))
         conn.commit()
 
+def modifypriority(id,priority):
+    with sqlite3.connect("database.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute("UPDATE tasks SET priority = ? WHERE id = ?",(priority,id))
+        conn.commit()
+
+
 if __name__ == "__main__":
-    print("This file is only mean to be imported, not run directly.")
+    print("This file is only meant to be imported, not run directly.")
+
+
 

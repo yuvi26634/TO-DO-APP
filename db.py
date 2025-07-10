@@ -1,5 +1,13 @@
 import sqlite3
-
+def init_db():
+    with sqlite3.connect("database.db") as db:
+        cursor = db.cursor()
+        cursor.execute("create table if not exists tasks("
+                       "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                       "name TEXT NOT NULL,"
+                       "status TEXT NOT NULL,"
+                       "due_date TEXT NOT NULL)")
+        conn.commit()
 def addtodb(name,status,due_date):
     with sqlite3.connect("database.db") as conn:
         cursor = conn.cursor()

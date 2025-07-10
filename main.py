@@ -63,6 +63,7 @@ def removetask():
     db.deletetask(id)
 
 def main():
+    db.init_db()
     while True:
         menu()
         try:

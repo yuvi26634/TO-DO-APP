@@ -8,7 +8,7 @@ def init_db():
                        "status TEXT NOT NULL DEFAULT 'PENDING',"
                        "due_date TEXT NOT NULL,"
                        "created_date TEXT NOT NULL,"
-                       "updated_date TEXT DEFAULT '-',"
+                       "completed_date TEXT DEFAULT '-',"
                        "priority TEXT NOT NULL DEFAULT 'LOW')")
         conn.commit()
 def addtodb(name,status,due_date,created_date,priority):
@@ -24,11 +24,11 @@ def viewdb():
         return
     with sqlite3.connect("database.db") as conn:
         cursor = conn.cursor()
-        cursor.execute("select name,status,due_date,created_date,updated_date,priority from tasks")
-        print("S.NO".ljust(10)+"NAME".ljust(20)+"STATUS".ljust(15)+"DUE-DATE".ljust(15)+"CREATED-ON".ljust(15)+"UPDATED-ON".ljust(15)+"PRIORITY".ljust(10))
+        cursor.execute("select name,status,due_date,created_date,completed_date,priority from tasks")
+        print("S.NO".ljust(10)+"NAME".ljust(20)+"STATUS".ljust(15)+"DUE-DATE".ljust(15)+"CREATED-ON".ljust(15)+"COMPLETED-ON".ljust(15)+"PRIORITY".ljust(10))
         for i,row in enumerate(cursor.fetchall(),start=1):
-            name,status,due_date,created_date,updated_date,priority=row
-            print(f"{i}".ljust(10)+name.ljust(20)+status.ljust(15)+due_date.ljust(15)+created_date.ljust(15)+updated_date.ljust(15)+priority.ljust(10))
+            name,status,due_date,created_date,completed_date,priority=row
+            print(f"{i}".ljust(10)+name.ljust(20)+status.ljust(15)+due_date.ljust(15)+created_date.ljust(15)+completed_date.ljust(15)+priority.ljust(10))
 
 def gettask():
     with sqlite3.connect("database.db") as conn:
@@ -50,14 +50,16 @@ def deletetask(id):
 def modifytitle(id,title_new):
     with sqlite3.connect("database.db") as conn:
         cursor = conn.cursor()
-        #change column name in table
         cursor.execute("UPDATE tasks SET name = ? WHERE id = ?",(title_new,id))
         conn.commit()
 
-def modifystatus(id,status_new):
+def modifystatus(id,status_new,date):
     with sqlite3.connect("database.db") as conn:
         cursor = conn.cursor()
-        cursor.execute("UPDATE tasks SET status = ? WHERE id = ?",(status_new,id))
+        if status_new == "COMPLETED":
+            cursor.execute("UPDATE tasks SET status = ?,completed_date = ? WHERE id = ?",(status_new,date,id))
+        else:
+            cursor.execute("UPDATE tasks SET status = ?,completed_date = ? WHERE id = ?", (status_new,'-',id))
         conn.commit()
 
 def modify_due_date(id,date_new):
@@ -75,6 +77,11 @@ def modifypriority(id,priority):
 
 if __name__ == "__main__":
     print("This file is only meant to be imported, not run directly.")
-
+    with sqlite3.connect("database.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute("PRAGMA table_info(tasks)")
+        columns = cursor.fetchall()
+        for col in columns:
+            print(f"Name: {col[1]}, Type: {col[2]}, Default: {col[4]}")
 
 

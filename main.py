@@ -61,7 +61,7 @@ def modifytask():
             print("INVALID NUMBER")
     while True:
         try:
-            t=int(input("1. CHANGE STATUS\n2. CHANGE TITTLE\n3. CHANGE DUE-DATE\n4. CHANGE PRIORITY\n5. MAIN-MENU\n-->> "))
+            t=int(input("1. CHANGE STATUS\n2. CHANGE TITLE\n3. CHANGE DUE-DATE\n4. CHANGE PRIORITY\n5. MAIN-MENU\n-->> "))
             if t in [1,2,3,4]:
                 break
             else:
@@ -70,7 +70,8 @@ def modifytask():
             print("INVALID CHOICE")
     if t==1:
         status = get_valid_status()
-        db.modifystatus(task,status)
+        date = datetime.today().strftime('%Y-%m-%d')
+        db.modifystatus(task,status,date)
     elif t==2:
         while True:
             title_new = input("ENTER TASK TITLE : ").strip().upper()
@@ -90,10 +91,16 @@ def modifytask():
 
 def removetask():
     db.viewdb()
-    try:
-        id = int(input("ENTER TASK ID : "))
-    except ValueError:
-        print("INVALID ID")
+    while True:
+        try:
+            id = int(input("ENTER TASK NUMBER TO DELETE : "))
+            tasks = db.gettask()
+            if id < 1 or id > len(tasks):
+                print("INVALID TASK NUMBER")
+            else:
+                break
+        except ValueError:
+            print("ENTER IN CORRECT NUMBER FORMAT")
     db.deletetask(id)
 
 def main():

@@ -74,14 +74,22 @@ def modifypriority(id,priority):
         cursor.execute("UPDATE tasks SET priority = ? WHERE id = ?",(priority,id))
         conn.commit()
 
+def search_task(keyword,field):
+    with sqlite3.connect("database.db") as conn:
+        cursor = conn.cursor()
+        query = f"select * from tasks where {field} like ?"
+        cursor.execute(query,('%'+keyword+'%',))
+        results = cursor.fetchall()
+        if not results:
+            print("NO MATCHING TASKS FOUND")
+            return
+        print("S.NO".ljust(10) + "NAME".ljust(20) + "STATUS".ljust(15) + "DUE-DATE".ljust(15) + "CREATED-ON".ljust(15) + "COMPLETED-ON".ljust(15) + "PRIORITY".ljust(10))
+        for i, row in enumerate(results, start=1):
+            id,name, status, due_date, created_date, completed_date, priority = row
+            print(f"{i}".ljust(10) + name.ljust(20) + status.ljust(15) + due_date.ljust(15) + created_date.ljust(15) + completed_date.ljust(15) + priority.ljust(10))
 
 if __name__ == "__main__":
     print("This file is only meant to be imported, not run directly.")
-    with sqlite3.connect("database.db") as conn:
-        cursor = conn.cursor()
-        cursor.execute("PRAGMA table_info(tasks)")
-        columns = cursor.fetchall()
-        for col in columns:
-            print(f"Name: {col[1]}, Type: {col[2]}, Default: {col[4]}")
+
 
 

@@ -9,6 +9,7 @@ def get_valid_date():
             return date_input
         except ValueError:
             print("Invalid date format! Please enter in YYYY-MM-DD format.")
+
 def get_valid_priority():
     priority_list = ["LOW", "MEDIUM", "HIGH"]
     while True:
@@ -34,9 +35,10 @@ def get_valid_status():
         else:
             print('Invalid status entered. Please enter [COMPLETED,IN-PROGRESS,PENDING]')
     return status
+
 def menu():
     print("-----MAIN MENU-----");
-    print(" 1. ADD TASK\n 2. MODIFY TASK\n 3. REMOVE TASK\n 4. VIEW TASK\n 5. EXIT")
+    print(" 1. ADD TASK\n 2. MODIFY TASK\n 3. REMOVE TASK\n 4. VIEW TASK\n 5. SEARCH TASK\n 6. EXIT")
 
 def addtask():
     name=input("ENTER TASK NAME : ").strip().upper()
@@ -103,6 +105,29 @@ def removetask():
             print("ENTER IN CORRECT NUMBER FORMAT")
     db.deletetask(id)
 
+def search():
+    print("Search by :")
+    print(" 1. Keyword")
+    print(" 2. Status")
+    print(" 3. Due Date")
+    print(" 4. Created Date")
+    choice = input("ENTER YOUR CHOICE : ").strip()
+    field_map = {
+        "1": "name",
+        "2": "status",
+        "3": "due_date",
+        "4": "created_date"
+    }
+    if choice not in field_map:
+        print("INVALID CHOICE.")
+        return
+
+    keyword = input(f"ENTER SEARCH KEYWORD FOR {field_map[choice].upper()} : ").strip().upper()
+    if keyword:
+        db.search_task(keyword,field_map[choice])
+    else:
+        print("SEARCH KEYWORD CAN NOT BE EMPTY.")
+
 def main():
     db.init_db()
     while True:
@@ -123,6 +148,10 @@ def main():
             input("Press ENTER to continue")
             print("\n" * 25)
         elif choice ==5:
+            search()
+            input("Press ENTER to continue")
+            print("\n"*25)
+        elif choice ==6:
             break
         else:
             print("invalid choice")

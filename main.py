@@ -50,10 +50,12 @@ def addtask():
 
 def modifytask():
     db.viewdb()
+    tasks = db.gettask()
+    if not tasks:
+        return
     while True:
         try:
             task_id=int(input("ENTER TASK NO TO MODIFY : "))
-            tasks = db.gettask()
             if task_id <1 or task_id > len(tasks):
                 print("INVALID TASK NUMBER")
             else:
@@ -89,14 +91,16 @@ def modifytask():
         priority = get_valid_priority()
         db.modifypriority(task,priority)
     elif t==5:
-        main()
+        return
 
 def removetask():
     db.viewdb()
+    tasks = db.gettask()
+    if not tasks:
+        return
     while True:
         try:
             id = int(input("ENTER TASK NUMBER TO DELETE : "))
-            tasks = db.gettask()
             if id < 1 or id > len(tasks):
                 print("INVALID TASK NUMBER")
             else:
